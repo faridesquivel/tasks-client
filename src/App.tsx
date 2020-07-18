@@ -1,24 +1,41 @@
 import React from 'react';
-import logo from './logo.svg';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import AddTask from './screens/AddTask';
+import ListTasks from './screens/ListTasks';
+import TaskDetail from './screens/TaskDetail';
+import SignIn from './screens/SignIn';
+import SignUp from './screens/SignUp';
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/Routes/ProtectedRoute';
+import OpenRoute from './components/Routes/OpenRoute';
 import './App.css';
+import { RootState } from './store';
+import { AuthState } from './store/auth/types';
 
-function App() {
+export function App() {
+  const dispatch = useDispatch();
+  const authState = useSelector<RootState, AuthState>((state) => state.auth);
+  
+  const signOut = () => {
+    dispatch({ type: 'SIGN_OUT' })
+  };
+  const isLoggedIn = authState.token === null;
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <BrowserRouter>
+        <Navbar isAuthenticated={isLoggedIn} signOut={signOut}/>
+        <Switch>
+          <OpenRoute exact path='/signUp' component={SignUp}/>
+          <OpenRoute exact path='/signIn' component={SignIn}/>
+          <ProtectedRoute exact path='/tasks' isAuthenticated={isLoggedIn} component={ListTasks}/>
+          <ProtectedRoute exact path='/addTask' isAuthenticated={isLoggedIn} component={AddTask}/>
+          <ProtectedRoute exact path='/taskDetail/:tid' isAuthenticated={isLoggedIn} component={TaskDetail}/>
+          <Route exact path="/">
+            <Redirect to="/tasks" />
+          </Route>
+        </Switch>
+      </BrowserRouter>
     </div>
   );
 }

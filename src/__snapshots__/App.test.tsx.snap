@@ -1,0 +1,71 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App renders connected as React-Redux Component should render with given state from Redux store 1`] = `
+<div
+  className="App"
+>
+  <div
+    className="NavbarContainer"
+  >
+    <div
+      className="Title"
+    >
+      Tasks App
+    </div>
+    <div
+      className="NavbarItemsContainer"
+    >
+      <div
+        className="NavbarItem"
+      >
+        <a
+          className="Link"
+          href="/tasks"
+          id="list"
+          onClick={[Function]}
+        >
+          Tasks List
+        </a>
+      </div>
+      <div
+        className="NavbarItem"
+      >
+        <a
+          className="Link"
+          href="/addTask"
+          onClick={[Function]}
+        >
+          Add New Task
+        </a>
+      </div>
+      <div
+        className="NavbarItem"
+      >
+        <button
+          className="Link"
+          onClick={[Function]}
+        >
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+  <div
+    className="MuiContainer-root MuiContainer-fixed MuiContainer-maxWidthLg"
+  >
+    <div
+      className="MuiGrid-root makeStyles-topGrid-1 MuiGrid-container MuiGrid-spacing-xs-10"
+    >
+      <div
+        className="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12"
+      >
+        <div
+          className="MuiPaper-root MuiPaper-elevation1 MuiPaper-rounded"
+        >
+          xs=12
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
