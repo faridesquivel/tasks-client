@@ -37,7 +37,7 @@ const ListTasks = () => {
     }, [dispatch]);
     return (
         <Container>
-            <GridList className={classes.topGrid}>
+            {tasksState.tasks.length ? <GridList className={classes.topGrid}>
                 {tasksState.tasks
                 .filter((task: Task) => task.text.toLowerCase().includes(tasksState.filter.toLowerCase()))
                 .map((task: Task) => (
@@ -100,11 +100,20 @@ const ListTasks = () => {
                     </Paper>
                 ))}
             </GridList>
+            :
+            <Typography component="h1" variant="h6" className={classes.message}>
+                No tasks found! Please add one and comeback
+            </Typography>
+        }
         </Container>
     );
 };
 
 const useStyles = makeStyles((theme) => ({
+    message: {
+        marginTop: '20%',
+        color: theme.palette.primary.main
+    },
     topGrid: {
         marginTop: theme.spacing(3),
         marginBottom: '10% !important'
