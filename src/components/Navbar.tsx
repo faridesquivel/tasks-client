@@ -21,7 +21,7 @@ const Navbar = ({ signOut, onFilterChange }: any) => {
     return (
        <AppBar position="fixed" color="primary" className={classes.appBar}>
             <Toolbar>
-                <IconButton onClick={() => history.push('tasks')} className={classes.leftIcon} edge="start" color="inherit" aria-label="open drawer">
+                <IconButton title="List Button" onClick={() => history.push('tasks')} className={classes.leftIcon} edge="start" color="inherit" aria-label="open drawer">
                     <List />
                 </IconButton>
                 <div className={classes.search}>
@@ -39,11 +39,11 @@ const Navbar = ({ signOut, onFilterChange }: any) => {
                         inputProps={{ 'aria-label': 'search' }}
                     />
                 </div>
-                <Fab onClick={() => history.push('addTask')} color="secondary" aria-label="add" className={classes.fabButton}>
+                <Fab title="Add Button" onClick={() => history.push('addTask')} color="secondary" aria-label="add" className={classes.fabButton}>
                     <AddIcon/>
                 </Fab>
                 <div className={classes.grow} />
-                <IconButton onClick={signOut} className={classes.leftIcon}>
+                <IconButton title="Signout Button" onClick={signOut} className={classes.leftIcon}>
                     <ExitToApp className={classes.exitIcon}/>
                 </IconButton>
             </Toolbar>
