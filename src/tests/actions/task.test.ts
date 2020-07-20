@@ -50,7 +50,24 @@ describe('async actions', () => {
     const store = mockStore(TaskReducer)
     fetchMock.get('*', { response: 200 })
     store.dispatch(createTaskThunk(task))
-    console.log('actions', store.getActions())
+
+    expect(store.getActions()).toEqual(expectedActions)
+  })
+  it('should dispatch error actions after thunk', () => {
+    const task: Task = {
+        _id: expect.any(String),
+        completed: true,
+        dueDate: '2020-07-12T10:55',
+        text: 'Task text'
+    };
+    const expectedActions = [
+        setError(null),
+        setLoading(true)
+    ]
+
+    const store = mockStore(TaskReducer)
+    fetchMock.get('*', { response: 404 }, { overwriteRoutes: false })
+    store.dispatch(createTaskThunk(task))
 
     expect(store.getActions()).toEqual(expectedActions)
   })
