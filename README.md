@@ -1,3 +1,11 @@
+Para ejecutar la aplicación 
+1. Clonar código de github
+2. Ejecutar comando yarn
+3. Ejecutar comando yarn start
+
+Para ejecutar tests
+1. Ejecutar comando yarn test
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
