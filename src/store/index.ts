@@ -2,9 +2,11 @@ import { applyMiddleware, createStore, combineReducers } from 'redux'
 import thunk from 'redux-thunk'
 import { AuthReducer } from './auth/reducers';
 import { TaskReducer } from './tasks/reducers';
-const rootReducer = combineReducers({
+import { SystemReducer } from './system/reducers';
+export const rootReducer = combineReducers({
     auth: AuthReducer,
-    task: TaskReducer
+    task: TaskReducer,
+    system: SystemReducer
 });
 export const store = createStore(rootReducer, applyMiddleware(thunk));
 

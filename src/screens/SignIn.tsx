@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect, useSelector } from 'react-redux'
-import { ThunkDispatch } from 'redux-thunk'
+import { useSelector, useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { History } from 'history';
 import { Avatar, Container, Link, Typography } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
@@ -10,18 +10,28 @@ import { signInThunk } from '../store/auth/actions';
 import { Redirect } from 'react-router-dom';
 import { AuthState } from '../store/auth/types';
 import { RootState } from '../store';
+import { Action } from 'redux';
+import { SystemState } from '../store/system/types';
+import { setError } from '../store/system/actions';
 
 type SignInProps = {
     history: History,
     signIn: (email: string, password: string) => void
 }
+type AuthDispatch = ThunkDispatch<AuthState, any, Action>;
 
 export const SignIn = ({ signIn, history }: SignInProps) => {
     const authState = useSelector<RootState, AuthState>((state) => state.auth);
+    const systemState = useSelector<RootState, SystemState>((state) => state.system);
+    const dispatch: AuthDispatch = useDispatch();
     const classes = useStyles();
     const onSignIn = (email: string, password: string) => {
-        signIn(email, password);
+        dispatch(signInThunk(email, password))
     }
+    const onSetError = (error: string) => {
+        dispatch(setError(error))
+    }
+    
     return (
         authState.token === null
         ?
@@ -37,8 +47,9 @@ export const SignIn = ({ signIn, history }: SignInProps) => {
                 </Typography>
                 <AuthForm 
                     buttonText="Sign In"
-                    error={authState.error} 
-                    isLoading={authState.loading}
+                    error={systemState.error} 
+                    setError={onSetError}
+                    isLoading={systemState.loading}
                     onSubmit={onSignIn}/>
                 <Link
                     component="button"
@@ -54,16 +65,6 @@ export const SignIn = ({ signIn, history }: SignInProps) => {
     );
 };
 
-const mapDispatch = (dispatch: ThunkDispatch<{}, {}, any>, ownProps: any): any => {
-    return {
-        signIn: async (email: string, password: string) => {
-            await dispatch(signInThunk(email, password))
-        }
-    };
-}
-  
-const connector = connect(null, mapDispatch);
-
 const useStyles = makeStyles((theme) => ({
     avatar: {
         margin: theme.spacing(1),
@@ -78,4 +79,4 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default connector(SignIn);
+export default SignIn;

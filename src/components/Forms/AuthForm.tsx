@@ -13,11 +13,12 @@ import { AccountCircle, VpnKey } from '@material-ui/icons'
 type AuthFormProps = {
     buttonText: string,
     error: string | null,
+    setError: (error: string) => void,
     isLoading: boolean,
     onSubmit: (email: string, password: string) => void
 };
 
-const AuthForm: React.FC<AuthFormProps> = ({ buttonText, error, isLoading, onSubmit }) => {
+const AuthForm: React.FC<AuthFormProps> = ({ buttonText, error, setError, isLoading, onSubmit }) => {
     const classes = useStyles();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('');
@@ -30,6 +31,14 @@ const AuthForm: React.FC<AuthFormProps> = ({ buttonText, error, isLoading, onSub
     };
 
     const doSubmit = (event: React.MouseEvent<HTMLElement>) => {
+        if (!email) {
+            setError('Please provide an email')
+            return;
+        }
+        if (!password) {
+            setError('Please provide a password')
+            return;
+        }
         onSubmit(email, password);
     }
 
@@ -69,15 +78,22 @@ const AuthForm: React.FC<AuthFormProps> = ({ buttonText, error, isLoading, onSub
             {error ? <Typography component="h1" variant="h6" className={classes.error}>
                 {error}
             </Typography> : null}
-            <Button variant="contained" color="primary" onClick={doSubmit}>
-                {isLoading === false ? buttonText : <CircularProgress color="secondary" />}
-            </Button>
+            {isLoading !== true ? 
+                <Button variant="contained" color="primary" onClick={doSubmit}>
+                    {buttonText}
+                </Button> 
+                    : 
+                <CircularProgress color="secondary" className={classes.loading}/>
+            }
         </FormGroup>
     );
 };
 const useStyles = makeStyles((theme) => ({
     error: {
         color: theme.palette.secondary.main
+    },
+    loading: {
+        margin: 'auto'
     }
 }));
 

@@ -1,9 +1,7 @@
-import { setError, setLoading } from '../../store/auth/actions';
-import { SET_ERROR, SET_LOADING } from '../../store/auth/types';
-import { Provider } from 'react-redux'
-import configureStore from 'redux-mock-store'
+import { setError, setLoading } from '../../store/system/actions';
+import { SET_ERROR, SET_LOADING } from '../../store/system/types';
 
-describe('actions', () => {
+describe('system actions', () => {
     it('should set error message', () => {
         const error = 'Failed login';
         const expectedAction = {

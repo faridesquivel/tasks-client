@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect, useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { ThunkDispatch } from 'redux-thunk'
 import { History } from 'history';
 import { Avatar, Container, Link, Typography } from '@material-ui/core';
@@ -9,19 +9,28 @@ import AuthForm from '../components/Forms/AuthForm';
 import { signUpThunk } from '../store/auth/actions';
 import { Redirect } from 'react-router-dom';
 import { AuthState } from '../store/auth/types';
+import { SystemState } from '../store/system/types';
 import { RootState } from '../store';
+import { Action } from 'redux';
+import { setError } from '../store/system/actions';
 
 type SignUpProps = {
-    history: History,
-    signUp: (email: string, password: string) => void
+    history: History
 }
+type AuthDispatch = ThunkDispatch<AuthState, any, Action>;
 
-const SignUp = ({ history, signUp }: SignUpProps) => {
-    const authState = useSelector<RootState, AuthState>((state) => state.auth);
+const SignUp = ({ history }: SignUpProps) => {
     const classes = useStyles();
+    const authState = useSelector<RootState, AuthState>((state) => state.auth);
+    const systemState = useSelector<RootState, SystemState>((state) => state.system);
+    const dispatch: AuthDispatch = useDispatch();
     const onSignUp = (email: string, password: string) => {
-        signUp(email, password);
+        dispatch(signUpThunk(email, password))
     }
+    const onSetError = (error: string) => {
+        dispatch(setError(error))
+    }
+
     return (
         authState.token === null
             ? 
@@ -38,8 +47,9 @@ const SignUp = ({ history, signUp }: SignUpProps) => {
                 <AuthForm 
                     buttonText="Sign Up" 
                     onSubmit={onSignUp} 
-                    error={authState.error} 
-                    isLoading={authState.loading}
+                    error={systemState.error} 
+                    setError={onSetError}
+                    isLoading={systemState.loading}
                 />
                 <Link
                     component="button"
@@ -55,16 +65,6 @@ const SignUp = ({ history, signUp }: SignUpProps) => {
     );
 };
 
-const mapDispatch = (dispatch: ThunkDispatch<{}, {}, any>, ownProps: any): any => {
-    return {
-        signUp: async (email: string, password: string) => {
-            await dispatch(signUpThunk(email, password))
-        }
-    };
-}
-  
-const connector = connect(null, mapDispatch);
-
 const useStyles = makeStyles((theme) => ({
     avatar: {
         margin: theme.spacing(1),
@@ -79,4 +79,4 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default connector(SignUp);
+export default SignUp;

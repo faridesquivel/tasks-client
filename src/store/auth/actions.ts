@@ -1,6 +1,7 @@
-import { SIGN_IN, SIGN_UP, SIGN_OUT, SET_ERROR, SET_LOADING, AuthActionTypes } from './types'
+import { SIGN_IN, SIGN_UP, SIGN_OUT, AuthActionTypes } from './types'
 import { AnyAction } from 'redux';
 import { ThunkAction } from 'redux-thunk';
+import { setLoading, setError } from '../system/actions';
 import api from '../../api/api';
 
 export function signIn(token: string): AuthActionTypes {
@@ -17,6 +18,7 @@ export const signInThunk = (
   password: string
 ): ThunkAction<void, {}, {}, AnyAction> => async dispatch => {
   try {
+    dispatch(setError(null))
     dispatch(setLoading(true))
     const asyncResp = await api.post('/signin', {
       email,
@@ -28,10 +30,18 @@ export const signInThunk = (
       )
     }
   } catch (error) {
-    dispatch(
-      setError(error.response.data.error)
-    );
-    console.log('error');
+    console.log('error', error.response);
+    if (error.response && error.response.data && error.response.data.error) {
+      dispatch(
+        setError(error.response.data.error)
+      );
+    } else {
+      dispatch(
+        setError('No se pudo iniciar sesión, por favor intenta nuevamente')
+      )
+    }
+  } finally {
+    dispatch(setLoading(false))
   }
 }
 
@@ -49,6 +59,7 @@ export const signUpThunk = (
   password: string
 ): ThunkAction<void, {}, {}, AnyAction> => async dispatch => {
   try {
+    dispatch(setError(null))
     dispatch(setLoading(true))
     const asyncResp = await api.post('/signup', {
       email,
@@ -60,37 +71,26 @@ export const signUpThunk = (
       )
     }
   } catch (error) {
-    console.log(error.response);
-    if (error.response.status === 409) {
+    if (error.response && error.response.status === 409) {
       dispatch(setError('Email already exists'));
     } else {
-      dispatch(
-        setError(error.response.data)
-      );
+      if (error.response && error.response.data) {
+        dispatch(
+          setError(error.response.data)
+        );
+      } else {
+        dispatch(
+          setError('No se pudo iniciar sesión, por favor intenta nuevamente')
+        )
+      }
     }
+  } finally {
+    dispatch(setLoading(false));
   }
 }
 
 export function signOut(): AuthActionTypes {
   return {
     type: SIGN_OUT
-  }
-}
-
-export function setError(error: string | null) {
-  return {
-    type: SET_ERROR,
-    payload: {
-      error
-    }
-  }
-}
-
-export function setLoading(loading: boolean) {
-  return {
-    type: SET_LOADING,
-    payload: {
-      loading
-    }
   }
 }

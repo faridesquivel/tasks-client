@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import React, { ChangeEvent } from 'react';
+import { Switch, Route, Redirect, Router } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AddTask from './screens/AddTask';
 import ListTasks from './screens/ListTasks';
@@ -12,19 +12,27 @@ import OpenRoute from './components/Routes/OpenRoute';
 import './App.css';
 import { RootState } from './store';
 import { AuthState } from './store/auth/types';
+import { signOut } from './store/auth/actions';
+import { setTasksFilter } from './store/tasks/actions';
+import { createBrowserHistory } from "history";
+
+export const history = createBrowserHistory(); 
 
 export function App() {
   const dispatch = useDispatch();
   const authState = useSelector<RootState, AuthState>((state) => state.auth);
   
-  const signOut = () => {
-    dispatch({ type: 'SIGN_OUT' })
+  const onSignOut = () => {
+    dispatch(signOut());
   };
-  const isLoggedIn = authState.token === null;
+  const setFilter = (event: ChangeEvent<HTMLInputElement>) => {
+    dispatch(setTasksFilter(event.target.value))
+  }
+  const isLoggedIn = authState.token !== null;
   return (
     <div className="App">
-      <BrowserRouter>
-        <Navbar isAuthenticated={isLoggedIn} signOut={signOut}/>
+      <Router history={history}>
+        {isLoggedIn ? <Navbar onFilterChange={setFilter} signOut={onSignOut}/> : null}
         <Switch>
           <OpenRoute exact path='/signUp' component={SignUp}/>
           <OpenRoute exact path='/signIn' component={SignIn}/>
@@ -35,7 +43,7 @@ export function App() {
             <Redirect to="/tasks" />
           </Route>
         </Switch>
-      </BrowserRouter>
+      </Router>
     </div>
   );
 }

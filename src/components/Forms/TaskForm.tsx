@@ -16,26 +16,34 @@ import { taskInitialState } from "../../store/tasks/reducers";
 
 type NewTaskInputProps = {
   addTask(task: Task): void;
+  setError(error: string): void;
   error: string | null;
   isLoading: boolean;
 }
 
-const TaskForm: React.FC<NewTaskInputProps> = ({ addTask, isLoading, error }) => {
+const TaskForm: React.FC<NewTaskInputProps> = ({ addTask, isLoading, error, setError }) => {
   const classes = useStyles();
   const [task, setTask] = React.useState(taskInitialState);
 
   const updateTask = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value, name } = event.target;
+    const { checked, value, name } = event.target;
     setTask((prevState) => ({
       ...prevState,
-      [name]: value
+      [name]: (value || name !== 'completed') ? value : checked
     }));
   };
 
 
   const doSubmit = (event: React.MouseEvent<HTMLElement>) => {
-    console.log('Will send: ', task);
-    // addTask(task);
+    if (!task.text) {
+      setError('Please add a description')
+      return;
+    }
+    if (!task.dueDate) {
+      setError('Please set a due date')
+      return;
+    }
+    addTask(task);
   }
 
   return (
@@ -56,10 +64,10 @@ const TaskForm: React.FC<NewTaskInputProps> = ({ addTask, isLoading, error }) =>
           }}
       />
       <TextField 
-          value={task.date} 
+          value={task.dueDate} 
           onChange={updateTask}
           margin="normal" 
-          name="date" 
+          name="dueDate" 
           label="Date" 
           variant="outlined" 
           type="datetime-local"
@@ -74,17 +82,21 @@ const TaskForm: React.FC<NewTaskInputProps> = ({ addTask, isLoading, error }) =>
             checked={task.completed}
             onChange={updateTask}
             name="completed"
-            indeterminate
           />
         }
-        label="Completed"
+        label="Mark as Completed"
       />
       {error ? <Typography component="h1" variant="h6" className={classes.error}>
           {error}
       </Typography> : null}
-      <Button variant="contained" color="primary" onClick={doSubmit}>
-          {isLoading === false ? 'Add Task' : <CircularProgress color="primary" />}
-      </Button>
+
+      {isLoading !== true ? 
+        <Button variant="contained" color="primary" onClick={doSubmit}>
+          Add task
+        </Button>
+            : 
+        <CircularProgress color="secondary" className={classes.loading}/>
+      }
     </FormGroup>
   );
 };
@@ -94,6 +106,9 @@ const useStyles = makeStyles((theme) => ({
     },
     centered: {
       justifyContent: 'center'
+    },
+    loading: {
+      margin: 'auto'
     }
 }));
 
