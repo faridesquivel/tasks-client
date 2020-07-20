@@ -23,55 +23,14 @@ import {
     Task,
     TasksState
 } from '../../store/tasks/types';
-import { rootReducer, RootState } from '../../store'
 import configureMockStore from 'redux-mock-store'
-import thunk, { ThunkDispatch, ThunkAction } from 'redux-thunk'
-import { AnyAction, Action } from 'redux';
+import thunk, { ThunkDispatch } from 'redux-thunk'
+import { AnyAction } from 'redux';
 import fetchMock from 'fetch-mock'
 import { setError, setLoading } from '../../store/system/actions';
 import { TaskReducer } from '../../store/tasks/reducers';
 const middlewares = [thunk]
 const mockStore = configureMockStore<any, ThunkDispatch<TasksState, any, AnyAction>>(middlewares)
-
-describe('async actions', () => {
-
-  it('should dispatch create actions after thunk', () => {
-    const task: Task = {
-        _id: expect.any(String),
-        completed: true,
-        dueDate: '2020-07-12T10:55',
-        text: 'Task text'
-    };
-    const expectedActions = [
-        setError(null),
-        setLoading(true)
-    ]
-
-    const store = mockStore(TaskReducer)
-    fetchMock.get('*', { response: 200 })
-    store.dispatch(createTaskThunk(task))
-
-    expect(store.getActions()).toEqual(expectedActions)
-  })
-  it('should dispatch error actions after thunk', () => {
-    const task: Task = {
-        _id: expect.any(String),
-        completed: true,
-        dueDate: '2020-07-12T10:55',
-        text: 'Task text'
-    };
-    const expectedActions = [
-        setError(null),
-        setLoading(true)
-    ]
-
-    const store = mockStore(TaskReducer)
-    fetchMock.get('*', { response: 404 }, { overwriteRoutes: false })
-    store.dispatch(createTaskThunk(task))
-
-    expect(store.getActions()).toEqual(expectedActions)
-  })
-})
 
 describe('task actions', () => {
     it('should add deleting task', () => {
@@ -184,3 +143,43 @@ describe('task actions', () => {
         expect(updateTask(task)).toEqual(expectedAction);
     });
 });
+
+describe('async actions', () => {
+
+    it('should dispatch create actions after thunk', () => {
+      const task: Task = {
+          _id: expect.any(String),
+          completed: true,
+          dueDate: '2020-07-12T10:55',
+          text: 'Task text'
+      };
+      const expectedActions = [
+          setError(null),
+          setLoading(true)
+      ]
+  
+      const store = mockStore(TaskReducer)
+      fetchMock.get('*', { response: 200 })
+      store.dispatch(createTaskThunk(task))
+  
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+    it('should dispatch error actions after thunk', () => {
+      const task: Task = {
+          _id: expect.any(String),
+          completed: true,
+          dueDate: '2020-07-12T10:55',
+          text: 'Task text'
+      };
+      const expectedActions = [
+          setError(null),
+          setLoading(true)
+      ]
+  
+      const store = mockStore(TaskReducer)
+      fetchMock.get('*', { response: 404 }, { overwriteRoutes: false })
+      store.dispatch(createTaskThunk(task))
+  
+      expect(store.getActions()).toEqual(expectedActions)
+    })
+})
